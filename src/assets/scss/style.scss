@@ -1,0 +1,17 @@
+@import '~bootstrap/scss/bootstrap';
+@import 'color';
+@import 'variables';
+@import 'fonts';
+@import 'header';
+@import 'footer';
+body{
+  padding: 0;
+  margin: 0;
+  font-size: $font_sm;
+  background-color: $river_Bed;
+}
+
+::selection{
+  background: $river_Bed;
+  color: $highlight_yellow;
+}

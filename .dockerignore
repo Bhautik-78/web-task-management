@@ -1,0 +1,12 @@
+.husky 
+.eslintignore 
+.eslintrc.json 
+.gitignore 
+.dockerignore
+.lintstagedrc
+.prettierignore 
+.prettierrc
+
+
+node_modules
+dist

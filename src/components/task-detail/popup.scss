@@ -1,0 +1,24 @@
+.search{
+  width : 100%;
+  max-width: 595px;
+  height: 43px;
+  margin: 5px 44px 19px 17px;
+  border-radius: 8px;
+  border: solid 1px var(--warm-grey-55);
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.errorMessage{
+  top: 0 !important;
+}
+
+.modal-content {
+  //left: 50%;
+  //top: 50%;
+  //transform: translate(-50%, -50%);
+  margin: 0.75rem 4.75rem !important;
+  display: flex !important;
+  position: absolute !important;
+  max-width: 1029px !important;
+  width: 100% !important;
+}

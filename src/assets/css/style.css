@@ -1,0 +1,221 @@
+@font-face {
+  font-family: 'HiraginoSans-W3';
+  src: url("../fonts/HiraginoSans/HiraginoSans-W3/HiraginoSans-W3.woff2") format("woff2"), url("../fonts/HiraginoSans/HiraginoSans-W3/HiraginoSans-W3.woff") format("woff");
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'HiraginoSans-W6';
+  src: url("../fonts/HiraginoSans/HiraginoSans-W6/HiraginoSans-W6.woff2") format("woff2"), url("../fonts/HiraginoSans/HiraginoSans-W6/HiraginoSans-W6.woff") format("woff");
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Avenir Next light';
+  src: url("../fonts/AvenirNext/avenir_next-light-webfont.woff2") format("woff2"), url("../fonts/AvenirNext/avenir_next-light-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Avenir Next Medium';
+  src: url("../fonts/AvenirNext/avenir_next-medium-webfont.woff2") format("woff2"), url("../fonts/AvenirNext/avenir_next-medium-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Avenir Next Regular';
+  src: url("../fonts/AvenirNext/avenir_next-regular-webfont.woff2") format("woff2"), url("../fonts/AvenirNext/avenir_next-regular-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal; }
+
+.header_container {
+  background-color: #353F43;
+  padding: 14px 40px 14px 48px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between; }
+  .header_container .brand_logo {
+    width: 114px;
+    height: 44px; }
+    .header_container .brand_logo a {
+      display: block; }
+      .header_container .brand_logo a img {
+        width: 100%; }
+  .header_container .right_menu .right_menu_list {
+    padding: 0;
+    margin: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center; }
+    .header_container .right_menu .right_menu_list .user_name {
+      margin-left: 0;
+      margin-right: 6px; }
+      .header_container .right_menu .right_menu_list .user_name a {
+        text-transform: lowercase;
+        color: #8f9bbc; }
+      .header_container .right_menu .right_menu_list .user_name + li::after {
+        display: none; }
+    .header_container .right_menu .right_menu_list li {
+      display: inline-block;
+      list-style: none;
+      margin-left: 14px;
+      margin-right: 14px;
+      position: relative; }
+      .header_container .right_menu .right_menu_list li a {
+        font-family: 'HiraginoSans-W3';
+        font-weight: normal;
+        font-size: 13px;
+        color: #ffb200;
+        text-transform: capitalize; }
+        .header_container .right_menu .right_menu_list li a img {
+          width: 13px;
+          margin-right: 6px; }
+      .header_container .right_menu .right_menu_list li + li::after {
+        content: '';
+        display: block;
+        height: 13px;
+        width: 1px;
+        background-color: #c1c8cb;
+        position: absolute;
+        top: 50%;
+        left: -14px;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%); }
+    .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu {
+      position: absolute;
+      top: 40px;
+      right: -20px;
+      min-width: 282px;
+      max-width: 282px;
+      z-index: 999;
+      background-color: #353F43;
+      -webkit-box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.5);
+      box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.5);
+      padding: 16px;
+      margin: 0;
+      display: none;
+      border-color: rgba(151, 151, 151, 0.55);
+      border-width: 1px;
+      border-style: solid;
+      border-radius: 15px; }
+      .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu li {
+        display: block;
+        margin: 0;
+        padding-top: 12px;
+        padding-bottom: 5px; }
+        .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu li::after {
+          display: none; }
+        .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu li a {
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          font-family: 'HiraginoSans-W3';
+          font-weight: normal;
+          font-size: 14px;
+          text-transform: capitalize; }
+          .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu li a img {
+            margin-left: auto;
+            margin-right: 8px; }
+        .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu li .btn-outline-primary {
+          height: 38px; }
+      .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu .active {
+        position: relative; }
+        .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu .active::after {
+          content: '';
+          display: block;
+          width: 12px;
+          height: 12px;
+          position: absolute;
+          top: 23px;
+          left: calc(100% - 20px);
+          background: url("../images/check_white.svg") center no-repeat; }
+      .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu .disabled {
+        pointer-events: none; }
+        .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu .disabled a {
+          color: #c1c8cb; }
+      .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu .menu_title, .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu .accordion_details .table_header, .header_container .right_menu .right_menu_list .custom_dropdown_menu .accordion_details .dropdown_menu .table_header {
+        font-family: 'HiraginoSans-W3';
+        font-weight: normal;
+        font-size: 14px;
+        color: #ffffff;
+        border-bottom: 1px solid #ffffff;
+        padding-bottom: 2px; }
+      .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu:after, .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu:before {
+        bottom: 100%;
+        right: 40px;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none; }
+      .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu:after {
+        border-color: rgba(136, 183, 213, 0);
+        border-bottom-color: #353F43;
+        border-width: 14px;
+        margin-right: 0px; }
+      .header_container .right_menu .right_menu_list .custom_dropdown_menu .dropdown_menu:before {
+        border-color: rgba(194, 225, 245, 0);
+        border-bottom-color: rgba(151, 151, 151, 0.55);
+        border-width: 16px;
+        margin-right: -2px; }
+    .header_container .right_menu .right_menu_list .custom_dropdown_menu .accordion_details {
+      padding-top: 10px;
+      padding-left: 26px; }
+      .header_container .right_menu .right_menu_list .custom_dropdown_menu .accordion_details .table_list {
+        padding: 0;
+        margin: 0; }
+        .header_container .right_menu .right_menu_list .custom_dropdown_menu .accordion_details .table_list li {
+          padding-top: 10px;
+          padding-bottom: 0;
+          font-family: 'HiraginoSans-W3';
+          font-weight: normal;
+          font-size: 14px;
+          color: #ffb200; }
+        .header_container .right_menu .right_menu_list .custom_dropdown_menu .accordion_details .table_list .active::after {
+          top: 14px; }
+
+footer {
+  padding: 26px 100px 25px 48px;
+  background-color: #1a2022;
+  margin-top: 26px;
+  min-height: 72px; }
+  footer .footer_link {
+    margin: 0;
+    padding: 0;
+    text-align: right; }
+    footer .footer_link li {
+      display: inline-block;
+      list-style: none; }
+      footer .footer_link li a {
+        font-family: 'Avenir Next Medium';
+        font-weight: normal;
+        font-size: 11px;
+        text-transform: uppercase;
+        color: #cfd5e5; }
+      footer .footer_link li + li {
+        margin-left: 96px; }
+
+body {
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+  background-color: #455054; }
+
+::-moz-selection {
+  background: #455054;
+  color: #ffb200; }
+
+::selection {
+  background: #455054;
+  color: #ffb200; }

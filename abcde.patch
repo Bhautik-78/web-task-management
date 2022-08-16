@@ -1,0 +1,357 @@
+Index: .env
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .env	(revision a1fc3235dab5a92657a4fe081eba5008eaa67ecb)
++++ .env	(date 1622005170080)
+@@ -1,4 +1,4 @@
+-AZURE_CLIENT_ID=f0ccbe3f-dd31-412d-b5ad-235fdbb16bf6
+-AZURE_TENANT_ID=f700b98b-78fb-4312-8d98-298d62e115c8
++AZURE_CLIENT_ID=3f5ceb0d-c291-4fdd-b66e-50caaf1ec657
++AZURE_TENANT_ID=ba1cb1a4-8ea9-404c-8337-cd6e2e205c53
+ API_URL=http://demo2722559.mockable.io/
+-AZURE_REDIRECT_URI=http://localhost:3000/
+\ No newline at end of file
++AZURE_REDIRECT_URI=http://localhost:3000/
+Index: src/components/task-detail/TaskDetail.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/components/task-detail/TaskDetail.tsx	(revision a1fc3235dab5a92657a4fe081eba5008eaa67ecb)
++++ src/components/task-detail/TaskDetail.tsx	(date 1622107606015)
+@@ -3,16 +3,19 @@
+ import Select from "react-select";
+ import { Trans } from 'react-i18next'
+ import DatePicker from "react-datepicker";
+-import CalenderIcon from "../../assets/images/calender.svg"
++import CalenderIcon from "../../../../../Think-Biz-ahmd/web-task-management/src/assets/images/calender.svg"
+ import "react-datepicker/dist/react-datepicker.css";
+-import "./popup.scss"
+-
++import "../../../../../Think-Biz-ahmd/web-task-management/src/components/task-detail/popup.scss"
+ 
+ const TaskDetail: React.FC = () => {
+ 
+   const [searchModal, setSearchModal] = useState(false)
++  const [status , setStatus] = useState(1)
+   const [taskTypeList , setTaskTypeList] = useState([])
+   const [priorityList , setPriorityList] = useState([])
++  const [assetList , setAssetList] = useState([])
++  const [startDate, setStartDate] = useState(new Date());
++  const [endDate, setEndDate] = useState(new Date());
+   const [responseObject , setResponseObject] = useState({
+     "selectedTaskName" : "",
+     "taskTypeId": "",
+@@ -21,13 +24,30 @@
+     "taskName": "",
+     "taskPriority": "",
+     "taskPriorityId": "",
++    "takeoverTeam": "",
++    "takeoverTeamId" : "",
++    "planned-date-time": "",
++    "due-date-time": ""
+   })
+   const [empty, setEmpty] = useState(false)
+ 
+   useEffect(() => {
+     fetchData();
++    fetchAssetData();
+   },[]);
+ 
++  const fetchAssetData = async () => {debugger
++    const response = await axios.get(`https://demo2722559.mockable.io/asset/asset-task-groups%3Fpower-plant-id=1`);
++    const localKey = JSON.parse(localStorage.getItem("userSetting"))
++    const taskGroupId = localKey['asset-task-group-id']
++    const a = response.data.find((item) => item['asset-task-group-id'] === taskGroupId)
++      if(response.status === 200) {
++        setAssetList(a.teams)
++      } else {
++        setAssetList([])
++      }
++  }
++
+    const  fetchData = async () => {
+ 
+     const response = await axios.get(`https://demo2722559.mockable.io/tasks/masters`);
+@@ -67,10 +87,22 @@
+       if(matchedObject && Object.keys(matchedObject || {}).length) {
+         setResponseObject({
+           ...responseObject,
+-          taskPriority: matchedObject["task-priority-name"] || "",
++          taskPriority: value,
+           taskPriorityId: matchedObject["task-priority-id"] || ""
+         })
+       }
++    } else if(name === "takeoverTeam") {
++      const matchedObject = (assetList || []).find(x => x["team-name"] === value.value)
++
++      if(matchedObject && Object.keys(matchedObject || {}).length){
++        setResponseObject({
++          ...responseObject,
++          [name] : value,
++          takeoverTeam : value,
++          takeoverTeamId : matchedObject["team-id"] || ""
++        })
++      }
++
+     } else {
+       setResponseObject({...responseObject, [name]: value})
+     }
+@@ -96,6 +128,10 @@
+ 
+   const onModalChange = ()  => setSearchModal(!searchModal)
+ 
++  const onReturn = () => {
++    window.location.href = "/"
++  }
++
+   return (
+     <div id="wrapper">
+       <div className="container custom_container">
+@@ -103,7 +139,7 @@
+           <div className="col-12">
+             <div className="task_info_box task_info_list_box">
+               <div className="task_update_info">
+-                <button className="btn btn-outline-primary btn_back">
++                <button onClick={onReturn} className="btn btn-outline-primary btn_back">
+                   戻る
+                 </button>
+                 <h3 className="title">タスク管理</h3>
+@@ -122,6 +158,7 @@
+                   <label className="col-form-label">タスクID</label>
+                   <div className="form_group_field">
+                     <input
++                      disabled={status === 1}
+                       type="text"
+                       readOnly
+                       className="form-control-plaintext input_plaintext fs_18"
+@@ -133,6 +170,7 @@
+                   <label className="col-form-label">起票日時</label>
+                   <div className="form_group_field">
+                     <input
++                      disabled={status === 1}
+                       type="text"
+                       readOnly
+                       className="form-control-plaintext input_plaintext fs_18"
+@@ -147,6 +185,7 @@
+ 
+                   <div className="form_select_input">
+                     <Select
++                      isDisabled={status !== 1 }
+                       value={responseObject.selectedTaskName || ""}
+                       name="selectedTaskName"
+                       placeholder={<Trans>REGISTER.PLACE_HOLDER</Trans>}
+@@ -154,6 +193,7 @@
+                       isClearable={false}
+                       options={(taskTypeList || []).map(x => ({...x, label: x["task-type-name"], value: x[["task-type-name"]]}))}
+                       onChange={(value) => handleChange({target: {name: "selectedTaskName", value: value}})}
++
+                     />
+                   </div>
+ 
+@@ -175,6 +215,7 @@
+                   </label>
+                   <div className="form_group_field">
+                     <input
++                      disabled={status !== 1 }
+                       type="text"
+                       className="form_control_input"
+                       id="task-name"
+@@ -182,6 +223,7 @@
+                       name={"taskName"}
+                       value={responseObject.taskName || ""}
+                       onChange={handleChange}
++                      maxLength={100}
+                     />
+                   </div>
+                 </div>
+@@ -189,15 +231,16 @@
+                   <label className="col-form-label" htmlFor="facility">
+                     設備
+                   </label>
+-                  <div className="form_group_field">
++                  <div onClick={onModalChange} className="form_group_field">
+                     <input
++                      disabled={status !== 1 }
+                       type="text"
+                       className="form_control_input"
+                       id="facility"
+                       placeholder="選択..."
+                     />
+                     <button
+-                      onClick={onModalChange}
++                      disabled={status !== 1 }
+                       className="btn_search"
+                       data-toggle="modal"
+                       data-target="#equipmentSearch"
+@@ -224,8 +267,11 @@
+                   </label>
+                   <div className="form_group_field date_input">
+                     <DatePicker
+-                        className="form_control_input"
+-                        placeholderText="YYYY-MM-DD"
++                      disabled={status !== 1 }
++                      selected={startDate}
++                      onChange={date => setStartDate(date)}
++                      className="form_control_input"
++                      placeholderText="YYYY-MM-DD"
+                     />
+                     <label
+                       htmlFor="scheduled-implementation-date"
+@@ -242,8 +288,10 @@
+                   >
+                     実施予定時刻
+                   </label>
+-                  <div className="form_group_field">
++                  <div onChange={handleChange} className="form_group_field">
+                     <input
++                      disabled={status !== 1 }
++                      name="startDateTime"
+                       type="text"
+                       className="form_control_input"
+                       id="scheduled-implementation-time"
+@@ -260,6 +308,9 @@
+                   </label>
+                   <div className="form_group_field date_input">
+                     <DatePicker
++                      disabled={status !== 1 }
++                      selected={endDate}
++                      onChange={date => setEndDate(date)}
+                         className="form_control_input"
+                         placeholderText="YYYY-MM-DD"
+                     />
+@@ -272,8 +323,10 @@
+                   <label className="col-form-label" htmlFor="deadline-time">
+                     実施予定時刻
+                   </label>
+-                  <div className="form_group_field">
++                  <div onChange={handleChange} className="form_group_field">
+                     <input
++                      disabled={status !== 1 }
++                      name="endDateTime"
+                       type="text"
+                       className="form_control_input"
+                       id="deadline-time"
+@@ -292,6 +345,7 @@
+                   </label>
+                   <div className="form_select_input">
+                     <Select
++                      isDisabled={status !== 1}
+                       value={responseObject.taskPriority || ""}
+                       name="taskPriority"
+                       placeholder={<Trans>REGISTER.PLACE_HOLDER</Trans>}
+@@ -306,6 +360,7 @@
+                   <label className="col-form-label">担当者</label>
+                   <div className="form_group_field">
+                     <button
++                      disabled={status !== 1 }
+                       className="btn btn-outline-primary btn-sm btn_add_icon"
+                       data-toggle="modal"
+                       data-target="#personChargeSelection"
+@@ -316,8 +371,10 @@
+                 </div>
+                 <div className="task_list_form_group form-group form_group_input">
+                   <label className="col-form-label">開始日時</label>
+-                  <div className="form_group_field">
++                  <div onChange={handleChange} className="form_group_field">
+                     <input
++                      disabled={status === 1 }
++                      name="start-date-time"
+                       type="text"
+                       readOnly
+                       className="form-control-plaintext input_plaintext"
+@@ -327,8 +384,10 @@
+                 </div>
+                 <div className="task_list_form_group form-group form_group_input">
+                   <label className="col-form-label">完了日時</label>
+-                  <div className="form_group_field">
++                  <div onChange={handleChange} className="form_group_field">
+                     <input
++                      disabled={status === 1 }
++                      name="end-date-time"
+                       type="text"
+                       readOnly
+                       className="form-control-plaintext input_plaintext"
+@@ -340,8 +399,10 @@
+                   <label className="col-form-label" htmlFor="deadline-time">
+                     実施予定時刻
+                   </label>
+-                  <div className="form_group_field">
++                  <div onChange={handleChange} className="form_group_field">
+                     <input
++                      disabled={status === 1 }
++                      name="working-hours"
+                       type="text"
+                       className="form_control_input"
+                       id="deadline-time"
+@@ -356,6 +417,7 @@
+                   <label className="col-form-label">ステータス</label>
+                   <div className="form_group_field">
+                     <input
++                      disabled={status === 1 }
+                       type="text"
+                       readOnly
+                       className="form-control-plaintext input_plaintext"
+@@ -372,48 +434,38 @@
+                   </label>
+                   <div className="form_select_input">
+                     <Select
+-                      value={responseObject.taskPriority || ""}
+-                      name="taskPriority"
++                      isDisabled={status !== 1}
++                      value={responseObject.takeoverTeam || ""}
++                      name="takeoverTeam"
+                       placeholder={<Trans>REGISTER.PLACE_HOLDER</Trans>}
+                       isSearchable={false}
+                       isClearable={false}
+-                      options={[]}
+-                      onChange={(value) => handleChange({target: {name: "taskPriority", value: value}})}
++                      options={(assetList || []).map(x => ({...x, label: x["team-name"], value: x[["team-name"]]}))}
++                      onChange={(value) => handleChange({target: {name: "takeoverTeam", value: value}})}
+                     />
+-                    {/*<Select*/}
+-                    {/*  name=""*/}
+-                    {/*  className="form-control select_input selectpicker"*/}
+-                    {/*  id="takeover-destination"*/}
+-                    {/*>*/}
+-                    {/*  <option value="" hidden>*/}
+-                    {/*    select...*/}
+-                    {/*  </option>*/}
+-                    {/*  <option value="Shinnagoya">Shinnagoya</option>*/}
+-                    {/*  <option value="Hekinan">Hekinan</option>*/}
+-                    {/*  <option value="Hitachinaka">Hitachinaka</option>*/}
+-                    {/*  <option value="Kawasaki">Kawasaki</option>*/}
+-                    {/*</Select>*/}
+                   </div>
+                 </div>
+                 <div className="task_list_form_group form-group form_group_input">
+                   <label className="col-form-label">Chain Memo</label>
+                   <div className="form_group_field">
+-                    <button className="btn btn-outline-primary btn-sm btn_add_icon">
++                    <button disabled={status === 1} className="btn btn-outline-primary btn-sm btn_add_icon">
+                       追加
+                     </button>
+                   </div>
+                 </div>
+                 <div className="task_list_form_group form-group form_group_input">
+                   <label className="col-form-label">備考</label>
+-                  <div className="form_group_field">
++                  <div onChange={handleChange} className="form_group_field">
+                     <textarea
+-                      name=""
+-                      id=""
++                      disabled={status !== 1}
++                      name="remarks"
++                      id="remarks"
+                       cols={30}
+                       rows={4}
+                       placeholder="入力"
+                       className="form_control_input"
+-                    ></textarea>
++                      maxLength={200}
++                    />
+                   </div>
+                 </div>
+               </div>

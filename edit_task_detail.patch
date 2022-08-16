@@ -1,0 +1,1136 @@
+Index: package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- package.json	(revision f3fa9a2630a1d3448e2ae249442001c06451ff8f)
++++ package.json	(date 1622183193732)
+@@ -53,14 +53,16 @@
+     "i18next-browser-languagedetector": "^6.1.1",
+     "moment": "^2.29.1",
+     "navi": "^0.14.0",
+-    "react": "^16.8.0 || ^17.0.0",
++    "react": ">=15",
+     "react-apexcharts": "^1.3.9",
+     "react-datepicker": "^3.8.0",
+     "react-dom": "^16.8.0 || ^17.0.0",
+     "react-i18next": "^11.8.15",
+     "react-js-pagination": "^3.0.3",
+     "react-navi": "^0.14.4",
++    "react-router-dom": "^5.2.0",
+     "react-select": "^4.3.1",
++    "react-simple-timefield": "^3.2.3",
+     "uikit": "^3.6.18"
+   }
+ }
+Index: src/hooks/taskmanagement/useTaskList.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/hooks/taskmanagement/useTaskList.ts	(revision f3fa9a2630a1d3448e2ae249442001c06451ff8f)
++++ src/hooks/taskmanagement/useTaskList.ts	(date 1622449427845)
+@@ -21,7 +21,7 @@
+     taskAssignees: any,
+     tasks: any,
+     assignees:any,
+-    allCountForCategoryOne: any 
++    allCountForCategoryOne: any
+     allCountForCategoryTwo: any
+     allCountForCategoryThree: any
+     completedCountForCategoryOne: any
+@@ -38,7 +38,7 @@
+     assignees,
+     setAssignees,
+   ] = React.useState<any>(null)
+-  
++
+   const [
+     taskAssignees,
+     setTaskAssignees,
+@@ -111,9 +111,9 @@
+                     }
+                 }
+                 else if (item['status'] !== 6 && item['status'] !== 7) {
+-                   
++
+                     if (item['task-category-id'] == 1) {
+-                        
++
+                         allCountDataForCategoryOne.push(item);
+                     }
+                     else if (item['task-category-id'] == 2) {
+@@ -123,7 +123,7 @@
+                         allCountDataForCategoryThree.push(item);
+                     }
+                 }
+-            }   
++            }
+         })
+         setAllCountForCategoryOne(allCountDataForCategoryOne);
+         setAllCountForCategoryTwo(allCountDataForCategoryTwo);
+@@ -145,13 +145,13 @@
+         setTaskAssignees(groupAssigneesByTaskId);
+         setTasks(sortedTasks);
+         setAssignees(res.data.assignees);
+-        
+-        
++
++
+         // localStorage.setItem('userSetting', JSON.stringify(res.data[0]));
+         // // redirect('/')
+         // // navigation.setContext({ path: "/"});
+         // navigation.navigate('/')
+-        
++
+       })
+       .catch((err) => {
+         if (err.response) {
+@@ -195,52 +195,104 @@
+     return newList;
+   }
+ 
++  // const applySorting = (list) => {debugger
++  //   list.sort(function(a,b){
++  //     //sort by task priority id desc Emergency → High → Medium → Low → Blank
++  //     let taskPrioritySort = 0;
++  //     let aValue = a['task-priority-id'];
++  //     let bValue = b['task-priority-id'];
++  //       if(aValue === "" || aValue === null || aValue === 0){
++  //         return taskPrioritySort = 1;
++  //       }
++  //       if(bValue === "" || bValue === null || bValue === 0) {
++  //         return taskPrioritySort = -1;
++  //       }
++  //       if(aValue === bValue){
++  //         taskPrioritySort = 0;
++  //       }else{
++  //         taskPrioritySort = aValue < bValue ? -1 : 1;
++  //         return taskPrioritySort;
++  //       }
++  //     let plannedDateSort = 0;
++  //     if(taskPrioritySort == 0) {
++  //       //sort by planned Date ascending order
++  //       let plannedDateA = a['planned-date-time'] != "" ? new Date(a['planned-date-time']) : "";
++  //       let plannedDateB = b['planned-date-time'] != "" ? new Date(b['planned-date-time']) : "";
++  //
++  //       if(plannedDateA === "" || plannedDateA === null) return 1;
++  //       if(plannedDateB === "" || plannedDateB === null) return -1;
++  //       if(plannedDateA > plannedDateB == false && plannedDateA < plannedDateB == false){
++  //         plannedDateSort = 0;
++  //       }else{
++  //         return plannedDateSort = plannedDateA < plannedDateB ? -1 : 1;
++  //       }
++  //     }
++  //     if(plannedDateSort == 0){
++  //       //sort by task id Descending
++  //       let taskIdSort = 0;
++  //       if(a['task-id'] === "" || a['task-id'] === null) return 1;
++  //       if(b['task-id'] === "" || b['task-id'] === null) return -1;
++  //       if(a['task-id'] === b['task-id']){
++  //         return taskIdSort = 0;
++  //       }else{
++  //         return taskIdSort = a['task-id'] < b['task-id'] ? -1 : 1;
++  //       }
++  //     }
++  //   })
++  //   return list;
++  // }
++
+   const applySorting = (list) => {
+-    list.sort(function(a,b){
+-      //sort by task priority id desc Emergency → High → Medium → Low → Blank
+-      let taskPrioritySort = 0;
+-      let aValue = a['task-priority-id'];
+-      let bValue = b['task-priority-id'];
+-        if(aValue === "" || aValue === null || aValue === 0){
+-          return taskPrioritySort = 1;
+-        }
+-        if(bValue === "" || bValue === null || bValue === 0) {
+-          return taskPrioritySort = -1;
+-        }
+-        if(aValue === bValue){
+-          taskPrioritySort = 0;
+-        }else{
+-          taskPrioritySort = aValue < bValue ? -1 : 1;
+-          return taskPrioritySort;
+-        }
+-      let plannedDateSort = 0;
+-      if(taskPrioritySort == 0) {
+-        //sort by planned Date ascending order
+-        let plannedDateA = a['planned-date-time'] != "" ? new Date(a['planned-date-time']) : "";
+-        let plannedDateB = b['planned-date-time'] != "" ? new Date(b['planned-date-time']) : "";
+-        
+-        if(plannedDateA === "" || plannedDateA === null) return 1;
+-        if(plannedDateB === "" || plannedDateB === null) return -1;
+-        if(plannedDateA > plannedDateB == false && plannedDateA < plannedDateB == false){
+-          plannedDateSort = 0;
+-        }else{
+-          return plannedDateSort = plannedDateA < plannedDateB ? -1 : 1;
+-        }
+-      }
+-      if(plannedDateSort == 0){
+-        //sort by task id Descending
+-        let taskIdSort = 0;
+-        if(a['task-id'] === "" || a['task-id'] === null) return 1;
+-        if(b['task-id'] === "" || b['task-id'] === null) return -1;
+-        if(a['task-id'] === b['task-id']){
+-          return taskIdSort = 0;
+-        }else{
+-          return taskIdSort = a['task-id'] < b['task-id'] ? -1 : 1;
+-        }
+-      }
+-    })
++    list.sort(function(a, b) {
++
++      const o1 = a['task-priority-id']
++      const o2 = b['task-priority-id']
+ 
+-    return list;
++      const p1 = new Date(a['planned-date-time'])
++      const p2 = new Date(b['planned-date-time'])
++
++      const q1 = a['task-id']
++      const q2 = b['task-id']
++
++
++      if (o1 < o2) return -1
++      // if (o1 > o2) return 1
++      // if (p1 < p2) return -1
++      if (p1 > p2) return 1
++      // if (q1 < q2) return -1
++      // if (q1 > q2) return 1
++      return 0
++    })
++    //   .sort(function(a,b) {
++    //   const p1 = new Date(a['planned-date-time'])
++    //   const p2 = new Date(b['planned-date-time'])
++    //   if (p1 < p2) return -1
++    //   if (p1 > p2) return 1
++    //   return 0
++    // }).sort(function(a,b) {
++    //   const q1 = a['task-id']
++    //   const q2 = b['task-id']
++    //   if (q1 < q2) return -1
++    //   if (q1 > q2) return 1
++    //   return 0
++    // })
++    console.log(list)
++    // return list.sort(function(a, b) {
++    //   const p1 = new Date(a['planned-date-time'])
++    //   const p2 = new Date(b['planned-date-time'])
++    //   if (p1 < p2) return -1
++    //   if (p1 > p2) return 1
++    //   return 0
++    // })
++    return list
++    //   return list.sort(function(a,b) {
++    //     const q1 = a['task-id'];
++    //     const q2 = b['task-id'];
++    //     if(q1 < q2) return -1;
++    //     if(q1 > q2) return 1;
++    //     return 0
++    //   })
++    // return list;
+   }
+ 
+   return {
+@@ -248,11 +300,11 @@
+     tasks,
+     assignees,
+     fetchTaskList,
+-    allCountForCategoryOne, 
++    allCountForCategoryOne,
+     allCountForCategoryTwo,
+     allCountForCategoryThree,
+     completedCountForCategoryOne,
+     completedCountForCategoryTwo,
+     completedCountForCategoryThree,
+   }
+-}
+\ No newline at end of file
++}
+Index: src/utils/constant.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/utils/constant.js	(date 1622439397823)
++++ src/utils/constant.js	(date 1622439397823)
+@@ -0,0 +1,22 @@
++export const getTaskName = (status) => {
++  let text = ""
++
++  if(Number(status) === 1) {
++    text = '新規登録'
++  } else if(Number(status) === 2) {
++    text = '未着手'
++  } else if(Number(status) === 3) {
++    text = '待機中'
++  } else if(Number(status) === 4) {
++    text = '実施中'
++  } else if(Number(status) === 5) {
++    text = '完了'
++  } else if(Number(status) === 6) {
++    text = '引継済'
++  }else if(Number(status) === 7) {
++    text = '無効'
++  }
++
++  return text
++}
++
+Index: src/route/index.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/route/index.tsx	(revision f3fa9a2630a1d3448e2ae249442001c06451ff8f)
++++ src/route/index.tsx	(date 1622183569295)
+@@ -23,6 +23,10 @@
+       view: <TaskDetail />,
+       type: 'private',
+     }),
++    '/task-detail/:taskId': privateRoute({
++      view: <TaskDetail />,
++      type: 'private',
++    }),
+     '/search-asset-result': privateRoute({
+       view: <TaskDetail />,
+       type: 'private',
+Index: src/components/task-detail/TaskDetail.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/components/task-detail/TaskDetail.tsx	(revision f3fa9a2630a1d3448e2ae249442001c06451ff8f)
++++ src/components/task-detail/TaskDetail.tsx	(date 1622531642577)
+@@ -1,141 +1,259 @@
+-import React, { useState,useEffect } from 'react'
+-import axios from "axios";
+-import Select from "react-select";
++import React, { useState, useEffect } from 'react'
++import axios from 'axios'
++import DatePicker from 'react-datepicker'
++import Select from 'react-select'
++import TimeField from 'react-simple-timefield'
++import moment, { invalid } from 'moment'
+ import { Trans } from 'react-i18next'
+-import DatePicker from "react-datepicker";
+-import CalenderIcon from "../../assets/images/calender.svg"
+-import "react-datepicker/dist/react-datepicker.css";
+-import "./popup.scss"
+-
++import { getTaskName } from '../../utils/constant'
++import CalenderIcon from '../../assets/images/calender.svg'
++import './popup.scss'
++import 'react-datepicker/dist/react-datepicker.css'
++import { ErrorMessage } from '../common/ErrorMessage'
+ 
+ const getLocalId = (type) => {
+-  const localData = JSON.parse(localStorage.getItem("userSetting"))
+-  if(localData) {
++  const localData = JSON.parse(localStorage.getItem('userSetting'))
++  if (localData) {
+     return (localData || {})[type]
+   } else {
+     1
+   }
+ }
+ 
+-const TaskDetail: React.FC = () => {
+-
++const TaskDetail: React.FC = (props) => {
+   const [searchModal, setSearchModal] = useState(false)
+-  const [status , setStatus] = useState(1)
+-  const [taskTypeList , setTaskTypeList] = useState([])
+-  const [priorityList , setPriorityList] = useState([])
+-  const [assetList , setAssetList] = useState([])
+-  const [startDate, setStartDate] = useState(null);
+-  const [endDate, setEndDate] = useState(null);
+-  const [responseObject , setResponseObject] = useState({
+-    "selectedTaskName" : "",
+-    "taskTypeId": "",
+-    "categoryName": "",
+-    "taskCategoryId": "",
+-    "taskName": "",
+-    "taskPriority": "",
+-    "taskPriorityId": "",
+-    "takeoverTeam": "",
+-    "takeoverTeamId" : "",
+-    "planned-date-time": "",
+-    "due-date-time": "",
+-    "remarks" : "",
+-    "assetTaskGroupId" : ""
++  const [errorMessage, setMessage] = useState("")
++  const [status, setStatus] = useState(1)
++  const [taskTypeList, setTaskTypeList] = useState([])
++  const [priorityList, setPriorityList] = useState([])
++  const [assetList, setAssetList] = useState([])
++  const [startDate, setStartDate] = useState(null)
++  const [endDate, setEndDate] = useState(null)
++  const [responseObject, setResponseObject] = useState({
++    assetId : "",
++    taskId : "",
++    selectedTaskName: '',
++    taskTypeId: '',
++    categoryName: '',
++    taskCategoryId: '',
++    taskName: '',
++    taskPriority: '',
++    taskPriorityId: '',
++    takeoverTeam: '',
++    takeoverTeamId: '',
++    remarks: '',
++    assetTaskGroupId: '',
++    startDateTime: '',
++    endDateTime: '',
++    workingHours: '',
++    notificationFlag : '',
++    assignedFlag: ''
+   })
+   const [empty, setEmpty] = useState(false)
+ 
+-  useEffect(() => {
+-    fetchData();
+-    fetchAssetData();
+-  },[]);
++  useEffect( () => {
++    const pathArray = window.location.pathname.split('/')
++    if ((pathArray || []).length > 2) {
++      editTaskDetail()
++    }
++    fetchData()
++    fetchAssetData()
++  }, [])
++
++  const editTaskDetail = async () => {
++    const pathArray = window.location.pathname.split('/')
++    const [response, response1, resoponse2] = await Promise.all([
++      axios.get(`https://demo2722559.mockable.io/tasks/masters`),
++      axios.get(`https://demo5917814.mockable.io/task/${pathArray[2]}`),
++      axios.get(`https://demo2722559.mockable.io/asset/asset-task-groups%3Fpower-plant-id=1`)
++    ])
++    console.log('response', response)
++    console.log('response1', response1)
++    console.log('resoponse2', resoponse2)
++    const matchedOverTeam = resoponse2.data.filter(item => item['asset-task-group-id'] === response1.data['asset-task-group-id'])
++    const matchedTeamId = matchedOverTeam[0].teams.filter(item => item['team-id'] === response1.data['takeover-team-id'])
++    const matcedPriority = response.data['task-priority'].filter(item => item['task-priority-id'] === response1.data['task-priority-id'])
++    const matchedObject = response.data['task-type'].filter(item => item['task-type-id'] === response1.data['task-type-id'])
++
++    const startDateAndTime = response1.data['planned-date-time'].split('T')
++    const startTime = startDateAndTime[1].slice(0, 5)
++    const startDate = startDateAndTime[0]
++    const localStartDate = startDate + 'T' + startTime + ':00.000Z'
++    const finalStartDate = moment(localStartDate).local().toDate()
++
++    const endDateAndTime = response1.data['due-date-time'].split('T')
++    const endTime = endDateAndTime[1].slice(0, 5)
++    const endDate = endDateAndTime[0]
++    const localEndDate = endDate + 'T' + endTime + ':00.000Z'
++    const finalEndDate = moment(localEndDate).local().toDate()
++
++    setStatus(response1.data.status),
++      setStartDate(finalStartDate),
++      setEndDate(finalEndDate),
++    setResponseObject({
++      ...responseObject,
++      selectedTaskName: {
++        'task-type-name': matchedObject[0]['task-type-name'],
++        'task-type-id': matchedObject[0]['task-type-id'],
++        label: matchedObject[0]['task-type-name'],
++        value: matchedObject[0]['task-type-name']
++      },
++      assetId : response1.data['asset-id'],
++      taskId: response1.data['task-id'],
++      taskTypeId: response1.data['task-type-id'],
++      categoryName: response1.data['task-category-name'],
++      taskCategoryId: response1.data['task-category-id'],
++      taskName: response1.data['task-name'],
++      taskPriority: {
++        'task-priority-id': matcedPriority[0]['task-priority-id'],
++        'task-priority-name': matcedPriority[0]['task-priority-name'],
++        'rank': matcedPriority[0]['rank'],
++        'value': matcedPriority[0]['task-priority-name'],
++        'label': matcedPriority[0]['task-priority-name']
++      },
++      taskPriorityId: response1.data['task-priority-id'],
++      takeoverTeam: {
++        'team-id': matchedTeamId[0]['team-id'],
++        'team-name': matchedTeamId[0]['team-name'],
++        label: matchedTeamId[0]['team-name'],
++        value: matchedTeamId[0]['team-name']
++      },
++      takeoverTeamId: response1.data['takeover-team-id'],
++      remarks: response1.data.remarks,
++      assetTaskGroupId: response1.data['asset-task-group-id'],
++      startDateTime: startTime ,
++      endDateTime: endTime,
++      assignedFlag: response1.data["assigned-flag"],
++      notificationFlag: response1.data["notification-flag"]
++      // 'working-hours': '',
++    })
++  }
+ 
+   const fetchAssetData = async () => {
+-    const response = await axios.get(`https://demo2722559.mockable.io/asset/asset-task-groups%3Fpower-plant-id=1`);
++    const response = await axios.get(
++      `https://demo2722559.mockable.io/asset/asset-task-groups%3Fpower-plant-id=1`
++    )
+     const a = response.data.find((item) => item['asset-task-group-id'] === 1)
+-      if(response.status === 200) {
+-        setAssetList(a.teams)
+-      } else {
+-        setAssetList([])
+-      }
++    if (response.status === 200) {
++      setAssetList(a.teams)
++    } else {
++      setAssetList([])
++    }
+   }
+ 
+-   const  fetchData = async () => {
+-
+-    const response = await axios.get(`https://demo2722559.mockable.io/tasks/masters`);
++  const fetchData = async () => {
++    const response = await axios.get(`https://demo2722559.mockable.io/tasks/masters`)
+ 
+-    if(response.status === 200) {
+-      setTaskTypeList(response.data["task-type"] || [])
+-      setPriorityList(response.data["task-priority"] || [])
+-      // setTaskTypeList(jsonData.taskType)
+-      // setPriorityList(jsonData.taskPriority)
++    if (response.status === 200) {
++      setTaskTypeList(response.data['task-type'] || [])
++      setPriorityList(response.data['task-priority'] || [])
+     } else {
+       setTaskTypeList([])
+       setPriorityList([])
+-      // setTaskTypeList(jsonData.taskType)
+-      // setPriorityList(jsonData.taskPriority)
+     }
+-
+-  };
++  }
+ 
+   const handleChange = (e) => {
+-    const {name, value} = e.target;
++    const { name, value } = e.target
+ 
+-    if(name === "selectedTaskName") {
+-      const matchedObject = (taskTypeList || []).find(x => x["task-type-name"] === value.value)
++    if (name === 'selectedTaskName') {
++      const matchedObject = (taskTypeList || []).find(
++        (x) => x['task-type-name'] === value.value
++      )
+ 
+-      if(matchedObject && Object.keys(matchedObject || {}).length) {
++      if (matchedObject && Object.keys(matchedObject || {}).length) {
+         setResponseObject({
+           ...responseObject,
+           [name]: value,
+-          taskTypeId: matchedObject["task-type-id"] || "",
+-          taskCategoryId: matchedObject["task-category-id"] || "",
+-          categoryName: matchedObject["task-category-name" || ""]
++          taskTypeId: matchedObject['task-type-id'] || '',
++          taskCategoryId: matchedObject['task-category-id'] || '',
++          categoryName: matchedObject['task-category-name' || ''],
+         })
+       }
+-    } else if(name === "taskPriority") {
+-      const matchedObject = (priorityList || []).find(x => x["task-priority-name"] === value.value)
++    } else if (name === 'taskPriority') {
++      const matchedObject = (priorityList || []).find(
++        (x) => x['task-priority-name'] === value.value
++      )
+ 
+-      if(matchedObject && Object.keys(matchedObject || {}).length) {
++      if (matchedObject && Object.keys(matchedObject || {}).length) {
+         setResponseObject({
+           ...responseObject,
+           taskPriority: value,
+-          taskPriorityId: matchedObject["task-priority-id"] || ""
++          taskPriorityId: matchedObject['task-priority-id'] || '',
+         })
+       }
+-    } else if(name === "takeoverTeam") {
+-      const matchedObject = (assetList || []).find(x => x["team-name"] === value.value)
++    } else if (name === 'takeoverTeam') {
++      const matchedObject = (assetList || []).find(
++        (x) => x['team-name'] === value.value
++      )
+ 
+-      if(matchedObject && Object.keys(matchedObject || {}).length){
++      if (matchedObject && Object.keys(matchedObject || {}).length) {
+         setResponseObject({
+           ...responseObject,
+-          [name] : value,
+-          takeoverTeam : value,
+-          takeoverTeamId : matchedObject["team-id"] || ""
++          [name]: value,
++          takeoverTeam: value,
++          takeoverTeamId: matchedObject['team-id'] || '',
+         })
+       }
+-
+     } else {
+-      setResponseObject({...responseObject, [name]: value})
++      setResponseObject({ ...responseObject, [name]: value })
+     }
+   }
+ 
++  const startDateTime = () => {
++    if(startDate !== null){
++      const date = moment(startDate).format("YYYY-MM-DDTHH:MM:SS.SSSZ").split("T")
++      const mergeTime = date[0]
++      const time = (responseObject.startDateTime).slice(0,5)
++      const mergeDateTime = mergeTime + "T" + time + ":00.330Z"
++      if(mergeDateTime){
++        return mergeDateTime
++      }
++    }
++  }
++
++  const endDateTime = () => {
++    if(endDate !== null){
++      const date = moment(endDate).format("YYYY-MM-DDTHH:MM:SS.SSSZ").split("T")
++      const mergeTime = date[0]
++      const time = (responseObject.endDateTime).slice(0,5)
++      const mergeDateTime = mergeTime + "T" + time + ":00.330Z"
++      if(mergeDateTime){
++        return mergeDateTime
++      }
++    }
++  }
++
+   const onCreateTask = async () => {
+-    if(!(responseObject.selectedTaskName && responseObject.taskName)){
++    if (
++      !(responseObject.selectedTaskName && responseObject.taskName) ||
++      (!(responseObject.startDateTime && startDate) && empty && startDate) ||
++      (!(responseObject.endDateTime && endDate) && empty && endDate)
++    ) {
++      if(!(responseObject.selectedTaskName && responseObject.taskName)){
++        setMessage("タスクタイプ、およびタスク名を入力してください")
++      }
+       setEmpty(true)
+       return
+     }
++    setEmpty(true)
++    setMessage("")
++
+     const body = {
+-      "task-type-id": responseObject.taskTypeId || "",
+-      "task-category-id": responseObject.taskCategoryId || "",
+-      "task-name": responseObject.taskName || "",
+-      "task-priority-id": responseObject.taskPriorityId || "",
+-      "asset-task-group-id": getLocalId('asset-task-group-id'),
+-      "power-plant-id": getLocalId('power-plant-id'),
+-      "asset-id" : "",
+-      "planned-date-time" : startDate || "",
+-      "due-date-time" : endDate || "",
+-      "working-hours" : "",
+-      "takeover-team-id" : responseObject.takeoverTeamId || "",
+-      "remarks" : responseObject.remarks || "",
++      'task-type-id': responseObject.taskTypeId || '',
++      'task-category-id': responseObject.taskCategoryId || '',
++      'task-name': responseObject.taskName || '',
++      'task-priority-id': responseObject.taskPriorityId || '',
++      'asset-task-group-id': getLocalId('asset-task-group-id'),
++      'power-plant-id': parseInt(getLocalId('power-plant-id')),
++      'asset-id': responseObject.assetId || '',
++      'planned-date-time': startDateTime() || '',
++      'due-date-time': endDateTime() || '',
++      'working-hours': '',
++      'takeover-team-id': responseObject.takeoverTeamId || '',
++      'notification-flag': responseObject.notificationFlag || '',
++      'assigned-flag': responseObject.assignedFlag || '',
++      'remarks': responseObject.remarks || ''
+     }
+ 
+     Object.keys(body).map((key, index) => {
+@@ -144,16 +262,17 @@
+       }
+     })
+ 
+-    const response = await axios.post(`http://demo5917814.mockable.io/tasks`,body);
+-    if(response.status === 201) {
+-      window.location.href = "/"
+-    }
++    console.log(body)
++    // const response = await axios.post(`http://demo5917814.mockable.io/tasks`,body);
++    // if(response.status === 201) {
++    //   window.location.href = "/"
++    // }
+   }
+ 
+-  const onModalChange = ()  => setSearchModal(!searchModal)
++  const onModalChange = () => setSearchModal(!searchModal)
+ 
+   const onReturn = () => {
+-    window.location.href = "/"
++    window.location.href = '/'
+   }
+ 
+   return (
+@@ -163,7 +282,10 @@
+           <div className="col-12">
+             <div className="task_info_box task_info_list_box">
+               <div className="task_update_info">
+-                <button onClick={onReturn} className="btn btn-outline-primary btn_back">
++                <button
++                  onClick={onReturn}
++                  className="btn btn-outline-primary btn_back"
++                >
+                   戻る
+                 </button>
+                 <h3 className="title">タスク管理</h3>
+@@ -177,6 +299,12 @@
+                   * 必須入力
+                 </label>
+               </div>
++              {errorMessage && (
++                <ErrorMessage
++                  classStr="custom_alert custom_alert_position_set"
++                  message={errorMessage}
++                />
++              )}
+               <div className="task_list">
+                 <div className="task_list_form_group form-group form_group_input">
+                   <label className="col-form-label">タスクID</label>
+@@ -186,7 +314,7 @@
+                       type="text"
+                       readOnly
+                       className="form-control-plaintext input_plaintext fs_18"
+-                      // value="0000000012"
++                      value={responseObject.taskId || ''}
+                     />
+                   </div>
+                 </div>
+@@ -202,25 +330,35 @@
+                     />
+                   </div>
+                 </div>
+-                <div className={`task_list_form_group form-group form_group_select ${empty && !responseObject.selectedTaskName && "has_error" }`}>
++                <div
++                  className={`task_list_form_group form-group form_group_select ${
++                    empty && !responseObject.selectedTaskName && 'has_error'
++                  }`}
++                >
+                   <label htmlFor="task-type" className="col-form-label">
+                     タスクタイプ <span className="required">*</span>
+                   </label>
+ 
+                   <div className="form_select_input">
+                     <Select
+-                      isDisabled={status !== 1 }
+-                      value={responseObject.selectedTaskName || ""}
++                      isDisabled={![1,2,3,4].includes(status)}
++                      value={responseObject.selectedTaskName || ''}
+                       name="selectedTaskName"
+                       placeholder={<Trans>REGISTER.PLACE_HOLDER</Trans>}
+                       isSearchable={false}
+                       isClearable={false}
+-                      options={(taskTypeList || []).map(x => ({...x, label: x["task-type-name"], value: x[["task-type-name"]]}))}
+-                      onChange={(value) => handleChange({target: {name: "selectedTaskName", value: value}})}
+-
++                      options={(taskTypeList || []).map((x) => ({
++                        ...x,
++                        label: x['task-type-name'],
++                        value: x[['task-type-name']],
++                      }))}
++                      onChange={(value) =>
++                        handleChange({
++                          target: { name: 'selectedTaskName', value: value },
++                        })
++                      }
+                     />
+                   </div>
+-
+                 </div>
+                 <div className="task_list_form_group form-group form_group_input">
+                   <label className="col-form-label">タスクカテゴリ</label>
+@@ -229,23 +367,27 @@
+                       type="text"
+                       readOnly
+                       className="form-control-plaintext input_plaintext"
+-                      value={responseObject.categoryName || ""}
++                      value={responseObject.categoryName || ''}
+                     />
+                   </div>
+                 </div>
+-                <div className={`task_list_form_group form-group form_group_input ${empty && !responseObject.taskName && "has_error"}`}>
++                <div
++                  className={`task_list_form_group form-group form_group_input ${
++                    empty && !responseObject.taskName && 'has_error'
++                  }`}
++                >
+                   <label className="col-form-label" htmlFor="task-name">
+                     タスク名 <span className="required">*</span>
+                   </label>
+                   <div className="form_group_field">
+                     <input
+-                      disabled={status !== 1 }
++                      disabled={![1,2,3,4].includes(status)}
+                       type="text"
+                       className="form_control_input"
+                       id="task-name"
+                       placeholder="入力"
+-                      name={"taskName"}
+-                      value={responseObject.taskName || ""}
++                      name={'taskName'}
++                      value={responseObject.taskName || ''}
+                       onChange={handleChange}
+                       maxLength={100}
+                     />
+@@ -255,17 +397,21 @@
+                   <label className="col-form-label" htmlFor="facility">
+                     設備
+                   </label>
+-                  <div onChange={handleChange} onClick={onModalChange} className="form_group_field">
++                  <div
++                    onChange={handleChange}
++                    onClick={onModalChange}
++                    className="form_group_field"
++                  >
+                     <input
+                       name="equipment"
+-                      disabled={status !== 1 }
++                      disabled={![1,2,3,4,5,6].includes(status)}
+                       type="text"
+                       className="form_control_input"
+                       id="facility"
+                       placeholder="選択..."
+                     />
+                     <button
+-                      disabled={status !== 1 }
++                      disabled={![1,2,3,4,5,6].includes(status)}
+                       className="btn_search"
+                       data-toggle="modal"
+                       data-target="#equipmentSearch"
+@@ -290,14 +436,21 @@
+                   >
+                     実施予定日
+                   </label>
+-                  <div className="form_group_field date_input">
++
++                  <div
++                    className={`form_group_field date_input ${
++                      responseObject.startDateTime && startDate
++                        ? ''
++                        : empty && responseObject.startDateTime && 'has_error'
++                    }`}
++                  >
+                     <DatePicker
+-                      disabled={status !== 1 }
++                      disabled={![1,2,3,4].includes(status)}
+                       selected={startDate}
+-                      // onChange={(newDate) => setResponseObject({plannedDateTime: moment(newDate).format("yyyy-MM-dd")})}
+-                      onChange={date => setStartDate(date)}
++                      onChange={(date) => setStartDate(date)}
+                       className="form_control_input"
+                       placeholderText="YYYY-MM-DD"
++                      dateFormat="yyyy/MM/dd"
+                     />
+                     <label
+                       htmlFor="scheduled-implementation-date"
+@@ -314,14 +467,23 @@
+                   >
+                     実施予定時刻
+                   </label>
+-                  <div onChange={handleChange} className="form_group_field">
+-                    <input
+-                      disabled={status !== 1 }
++                  <div
++                    onChange={handleChange}
++                    className={`form_group_field ${
++                      responseObject.startDateTime && startDate
++                        ? ''
++                        : empty && startDate && 'has_error'
++                    } `}
++                  >
++                    <TimeField
++                      value={responseObject.startDateTime || ''}
++                      disabled={![1,2,3,4].includes(status)}
+                       name="startDateTime"
+                       type="text"
+                       className="form_control_input"
+                       id="scheduled-implementation-time"
+                       placeholder="入力"
++                      style={{width : "100%"}}
+                     />
+                     <p className="help_block">
+                       Eg. <strong>00:00</strong> (24 hour format)
+@@ -332,13 +494,20 @@
+                   <label className="col-form-label" htmlFor="deadline">
+                     期限日
+                   </label>
+-                  <div className="form_group_field date_input">
++                  <div
++                    className={`form_group_field date_input ${
++                      responseObject.endDateTime && endDate
++                        ? ''
++                        : empty && responseObject.endDateTime && 'has_error'
++                    }`}
++                  >
+                     <DatePicker
+-                      disabled={status !== 1 }
++                      disabled={![1,2,3,4].includes(status)}
+                       selected={endDate}
+-                      onChange={date => setEndDate(date)}
+-                        className="form_control_input"
+-                        placeholderText="YYYY-MM-DD"
++                      onChange={(date) => setEndDate(date)}
++                      className="form_control_input"
++                      placeholderText="YYYY-MM-DD"
++                      dateFormat="yyyy/MM/dd"
+                     />
+                     <label htmlFor="deadline" className="calender_icon">
+                       <img src={CalenderIcon} alt="" />
+@@ -349,14 +518,23 @@
+                   <label className="col-form-label" htmlFor="deadline-time">
+                     実施予定時刻
+                   </label>
+-                  <div onChange={handleChange} className="form_group_field">
+-                    <input
+-                      disabled={status !== 1 }
++                  <div
++                    onChange={handleChange}
++                    className={`form_group_field ${
++                      responseObject.endDateTime && endDate
++                        ? ''
++                        : empty && endDate && 'has_error'
++                    }`}
++                  >
++                    <TimeField
++                      value={responseObject.endDateTime || ''}
++                      disabled={![1,2,3,4].includes(status)}
+                       name="endDateTime"
+                       type="text"
+                       className="form_control_input"
+                       id="deadline-time"
+                       placeholder="入力"
++                      style={{width : "100%"}}
+                     />
+                     <p className="help_block">
+                       Eg. <strong>00:00</strong> (24 hour format)
+@@ -371,14 +549,22 @@
+                   </label>
+                   <div className="form_select_input">
+                     <Select
+-                      isDisabled={status !== 1}
+-                      value={responseObject.taskPriority || ""}
++                      isDisabled={![1,2,3,4].includes(status)}
++                      value={responseObject.taskPriority || ''}
+                       name="taskPriority"
+                       placeholder={<Trans>REGISTER.PLACE_HOLDER</Trans>}
+                       isSearchable={false}
+                       isClearable={false}
+-                      options={(priorityList || []).map(x => ({...x, label: x["task-priority-name"], value: x[["task-priority-name"]]}))}
+-                      onChange={(value) => handleChange({target: {name: "taskPriority", value: value}})}
++                      options={(priorityList || []).map((x) => ({
++                        ...x,
++                        label: x['task-priority-name'],
++                        value: x[['task-priority-name']],
++                      }))}
++                      onChange={(value) =>
++                        handleChange({
++                          target: { name: 'taskPriority', value: value },
++                        })
++                      }
+                     />
+                   </div>
+                 </div>
+@@ -386,7 +572,7 @@
+                   <label className="col-form-label">担当者</label>
+                   <div className="form_group_field">
+                     <button
+-                      disabled={status !== 1 }
++                      disabled={![1,2,3].includes(status)}
+                       className="btn btn-outline-primary btn-sm btn_add_icon"
+                       data-toggle="modal"
+                       data-target="#personChargeSelection"
+@@ -399,7 +585,7 @@
+                   <label className="col-form-label">開始日時</label>
+                   <div onChange={handleChange} className="form_group_field">
+                     <input
+-                      disabled={status === 1 }
++                      disabled={status === 1}
+                       name="start-date-time"
+                       type="text"
+                       readOnly
+@@ -412,7 +598,7 @@
+                   <label className="col-form-label">完了日時</label>
+                   <div onChange={handleChange} className="form_group_field">
+                     <input
+-                      disabled={status === 1 }
++                      disabled={status === 1}
+                       name="end-date-time"
+                       type="text"
+                       readOnly
+@@ -426,13 +612,15 @@
+                     実施予定時刻
+                   </label>
+                   <div onChange={handleChange} className="form_group_field">
+-                    <input
+-                      disabled={status === 1 }
+-                      name="working-hours"
++                    <TimeField
++                      value={responseObject.workingHours}
++                      disabled={![5,6].includes(status)}
++                      name="workingHours"
+                       type="text"
+                       className="form_control_input"
+                       id="deadline-time"
+                       placeholder="{自動入力}"
++                      style={{width : "100%"}}
+                     />
+                     <p className="help_block">
+                       Eg. <strong>00:00</strong> (24 hour format)
+@@ -443,11 +631,11 @@
+                   <label className="col-form-label">ステータス</label>
+                   <div className="form_group_field">
+                     <input
+-                      disabled={status === 1 }
++                      disabled={status === 1}
+                       type="text"
+                       readOnly
+                       className="form-control-plaintext input_plaintext"
+-                      value="未着手"
++                      value={getTaskName(status)}
+                     />
+                   </div>
+                 </div>
+@@ -460,21 +648,32 @@
+                   </label>
+                   <div className="form_select_input">
+                     <Select
+-                      isDisabled={status !== 1}
+-                      value={responseObject.takeoverTeam || ""}
++                      isDisabled={![1,2,3,4].includes(status)}
++                      value={responseObject.takeoverTeam || ''}
+                       name="takeoverTeam"
+                       placeholder={<Trans>REGISTER.PLACE_HOLDER</Trans>}
+                       isSearchable={false}
+                       isClearable={false}
+-                      options={(assetList || []).map(x => ({...x, label: x["team-name"], value: x[["team-name"]]}))}
+-                      onChange={(value) => handleChange({target: {name: "takeoverTeam", value: value}})}
++                      options={(assetList || []).map((x) => ({
++                        ...x,
++                        label: x['team-name'],
++                        value: x[['team-name']],
++                      }))}
++                      onChange={(value) =>
++                        handleChange({
++                          target: { name: 'takeoverTeam', value: value },
++                        })
++                      }
+                     />
+                   </div>
+                 </div>
+                 <div className="task_list_form_group form-group form_group_input">
+                   <label className="col-form-label">Chain Memo</label>
+                   <div className="form_group_field">
+-                    <button disabled={status === 1} className="btn btn-outline-primary btn-sm btn_add_icon">
++                    <button
++                      disabled={![2,3,4,5,6,7].includes(status)}
++                      className="btn btn-outline-primary btn-sm btn_add_icon"
++                    >
+                       追加
+                     </button>
+                   </div>
+@@ -483,7 +682,8 @@
+                   <label className="col-form-label">備考</label>
+                   <div onChange={handleChange} className="form_group_field">
+                     <textarea
+-                      disabled={status !== 1}
++                      value={responseObject.remarks || ""}
++                      disabled={![1,2,3,4,5,6].includes(status)}
+                       name="remarks"
+                       id="remarks"
+                       cols={30}
+@@ -496,16 +696,36 @@
+                 </div>
+               </div>
+               <div className="task_list_button_action">
+-                {/*<button className="btn btn-outline-default btn_task_action">*/}
+-                {/*  コピー*/}
+-                {/*</button>*/}
+-                {/*<button className="btn btn-outline-danger btn_task_action" >*/}
+-                {/*  完了*/}
+-                {/*</button>*/}
+-                {/*<button className="btn btn-outline-danger btn_task_action">*/}
+-                {/*  削除*/}
+-                {/*</button>*/}
+-                <button className="btn btn-outline-primary btn_task_action btn_done_icon" onClick={onCreateTask}>
++                <button
++                  style={{display : (![2,3,4,7,6,5].includes(status)) ? 'none' : ""}}
++                  className="btn btn-outline-default btn_task_action">
++                  コピー
++                </button>
++                <button
++                  style={{display : (![4].includes(status)) ? 'none' : ""}}
++                  className="btn btn-outline-default btn_task_action">
++                  強制中断
++                </button>
++                <button
++                  style={{display : (![5].includes(status)) ? 'none' : ""}}
++                  className="btn btn-outline-danger btn_task_action">
++                  完了取消
++                </button>
++                <button
++                  style={{display : (![2,3].includes(status)) ? 'none' : ""}}
++                  className="btn btn-outline-danger btn_task_action" >
++                  完了
++                </button>
++                <button
++                  style={{display : (![2,3].includes(status)) ? 'none' : ""}}
++                  className="btn btn-outline-danger btn_task_action">
++                  削除
++                </button>
++                <button
++                  style={{display : (![1,2,3,4,6,5].includes(status)) ? 'none' : ""}}
++                  className="btn btn-outline-primary btn_task_action btn_done_icon"
++                  onClick={onCreateTask}
++                >
+                   更新
+                 </button>
+               </div>
+Index: src/components/task-management/TaskManagement.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/components/task-management/TaskManagement.tsx	(revision f3fa9a2630a1d3448e2ae249442001c06451ff8f)
++++ src/components/task-management/TaskManagement.tsx	(date 1622439397882)
+@@ -53,7 +53,7 @@
+           </label>
+         </div>*/}
+       </td>
+-      <td className="window_icon" onClick={newTaskTransition} ><a>{task['task-id']}</a></td>
++      <td className="window_icon" onClick={newTaskTransition} ><a href={`/task-detail/${task['task-id']}`}>{task['task-id']}</a></td>
+       <td>{task['task-priority-name']}</td>
+       <td className="text-elipsis">{task['task-name']}</td>
+       <td>{task['task-type-name']}</td>
+@@ -65,7 +65,7 @@
+       </td>
+       <td>
+       {
+-        t('TASK_MANAGEMENT_LIST.STATUS.'+task['statusName']) 
++        t('TASK_MANAGEMENT_LIST.STATUS.'+task['statusName'])
+       }
+       </td>
+       <td className={task['implementation-schedule-excess-indication'] ? 'danger-cell':''}>
+@@ -82,8 +82,8 @@
+       <td>
+         <a href="javascript:void(0);" className={'btn_table_action' + (task['is-chain-memo-available']==false ? ' btn_table_add_icon':'')}>
+         {
+-          task['is-chain-memo-available']==false ? 
+-          t('TASK_MANAGEMENT_LIST.BUTTONS.ADD_TO') : 
++          task['is-chain-memo-available']==false ?
++          t('TASK_MANAGEMENT_LIST.BUTTONS.ADD_TO') :
+           t('TASK_MANAGEMENT_LIST.BUTTONS.BROWSE_EDIT')
+         }
+         </a>

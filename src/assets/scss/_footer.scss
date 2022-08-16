@@ -1,0 +1,28 @@
+footer {
+  padding: 26px 100px 25px 48px;
+  background-color: $black_grey;
+  margin-top: 26px;
+  min-height: 72px;
+  .footer_link {
+    margin: 0;
+    padding: 0;
+    text-align: right;
+
+    li {
+      display: inline-block;
+      list-style: none;
+
+      a {
+        font-family: 'Avenir Next Medium';
+        font-weight: normal;
+        font-size: $font_sm - 3;
+        text-transform: uppercase;
+        color: $light_periwinkle;
+      }
+
+      +li {
+        margin-left: 96px;
+      }
+    }
+  }
+}
